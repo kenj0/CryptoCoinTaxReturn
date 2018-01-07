@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>仮想通貨取引帳簿 (2017年確定申告版)</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" href="css/mystyle.css">
+
+  </head>
+
+  <body ng-app="myApp" ng-controller="myCtrl">
+    <div class="container">
+      <h1>仮想通貨取引帳簿 (2017年確定申告版)</h1>
+    </div>
+
+    <hr>
+
+    <div class="container">
+      <h2>本アプリ帳簿ファイル入出力</h2>
+      <input type="file" id="file-history-load" style="display:none;">
+      <button type="button" class="btn btn-primary" onClick="$('#file-history-load').click();">Load</button>
+      <a href="#"  type="button" class="btn btn-success" id="btn-history-save">Save</a>
+      <hr>
+      <h2>取引所CSVファイルのインポート</h2>
+      <div class="col-sm-3">
+        <select class="form-control" id="sel-market-file-type">
+          <option selected>coincheck -AllHistory- (CSV)</option>
+          <option>Zaif -TradeHistory- (CSV)</option>
+          <option>Binance -TradeHistory- (CSV)</option>
+          <!-- <option>Zaif -DepositHistory-</option> -->
+          <!-- <option>Zaif -WithdrawHistory-</option> -->
+          <!-- <option>Binance -DepositHistory-</option> -->
+          <!-- <option>Binance -WithdrawHistory-</option> -->
+        </select>
+      </div>
+      <input type="file" id="market-history-load" style="display:none;">
+      <button type="button" class="btn btn-primary" onClick="$('#market-history-load').click();">Open</button>
+      <!-- <hr> -->
+    </div>
+<!--
+    <div class="container">
+      <h2>取引の入力</h2>
+      <p>日本円から仮想通貨を購入した時は、売却側にJPYと購総入金額[円]を入力してください</p>
+      <p>仮想通貨を売却して日本円にしたときは、購入側にJPYと売却総金額[円]を入力してください</p>
+      <p>仮想通貨間取引の場合は、チェックボックスをONにして、取引時の日本円相当の価値(例えば、売却通貨の総額[円])を入力してください</p>
+      <div class="row">
+        <div class="col-sm-3">
+          <label for="datetime-trans">取引日時</label>
+          <input type='text' class="form-control " id='datetime-trans' />
+        </div>
+        <div class="col-sm-2">
+          <label for="text-trans-buycoin">購入 (Coin or JPY)</label>
+          <input type="text" class="form-control" id="text-trans-buycoin" autocomplete="on" list="coin-type-list" placeholder="円に戻すときはJPY">
+        </div>
+        <div class="col-sm-2">
+          <label for="num-trans-buyamount">購入 (数量 or 円)</label>
+          <input type="tel" class="form-control" id="num-trans-buyamount">
+        </div>
+        <div class="col-sm-2">
+          <label for="text-trans-sellcoin">売却 (Coin or JPY)</label>
+          <input type="text" class="form-control" id="text-trans-sellcoin" autocomplete="on" list="coin-type-list" placeholder="円から買うときはJPY">
+        </div>
+        <div class="col-sm-2">
+          <label for="num-trans-sellamount">売却 (数量 or 円)</label>
+          <input type="tel" class="form-control" id="num-trans-sellamount">
+        </div>
+      </div>
+
+      <label for="addInputIsAlt">仮想通貨間取引?</label>
+      <div class="row">
+        <div class="col-sm-3">
+          <div class="input-group">
+            <span class="input-group-addon">
+              <input type="checkbox" id="flag-trans-isAltAlt">
+            </span>
+            <input type="text" class="form-control" id="text-trans-AltAltJPY" placeholder="売却側コイン日本円相当総額 [円]">
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <button type="button" class="btn btn-info" id="btn-trans-getcurrent" disabled>時価を取得 (not supported yet)</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-3">
+          <label for="text-trans-marketplace">取引所</label>
+          <input type="text" class="form-control" id="text-trans-marketplace" autocomplete="on" list="marketplace-list" placeholder="必須ではありません">
+        </div>
+        <div class="col-sm-9">
+          <label for="text-trans-comment">コメント</label>
+          <input type="text" class="form-control" id="text-trans-comment" placeholder="必須ではありません">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-3">
+          <button type="button" class="btn btn-primary" id="btn-transaction-submit">登録</button>
+          <button type="button" class="btn btn-secondary" id="btn-transaction-clear">クリア</button>
+        </div>
+      </div>
+    </div>
+-->
+    <hr>
+
+    <div class="container">
+      <h2>取引履歴</h2>
+      <div class="table-responsive">
+        <input type="button" id="btn-update-history" ng-click="updateHistory()" style="display:none;">
+        <button type="button" class="btn btn-secondary" id="btn-history-clear">クリア</button>
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">日時</th>
+              <th scope="col">取引所</th>
+              <th scope="col">購入通貨名</th>
+              <th scope="col">購入通貨数量</th>
+              <th scope="col">売却通貨名</th>
+              <th scope="col">売却通貨数量</th>
+              <th scope="col">仮想通貨間取引</th>
+              <th scope="col">売却通貨の時価[円]</th>
+              <th scope="col">残高</th>
+              <th scope="col">簿価 [円]</th>
+              <th scope="col">平均取得価額 [円]</th>
+              <th scope="col">利益 [円]</th>
+              <th scope="col">備考</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="transaction in history">
+              <th scope="row">{{transaction.index}}</th>
+              <td>{{transaction.datetime}}</td>
+              <td>{{transaction.marketplace}}</td>
+              <td>{{transaction.buyCoin}}</td>
+              <td>{{transaction.buyAmount}}</td>
+              <td>{{transaction.sellCoin}}</td>
+              <td>{{transaction.sellAmount}}</td>
+              <td>{{(transaction.isAltTrade) ? "Yes" : "No"}}</td>
+              <td>{{transaction.altJPY}}</td>
+              <td><p>{{transaction.balance}}</p></td>
+              <td><p>{{transaction.value}}</p></td>
+              <td><p>{{transaction.averageAcquisitionPrice}}</p></td>
+              <td>{{transaction.profit}}</td>
+              <td>{{transaction.comment}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="container">
+      <h2>ポートフォリオ</h2>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th scope="col">コイン名</th>
+              <th scope="col">残高</th>
+              <th scope="col">平均取得価額 [円]</th>
+              <th scope="col">簿価 [円]</th>
+              <!-- <th scope="col">時価 [円]</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="detail in portfolio">
+              <th scope="row">{{detail.coin}}</th>
+              <td>{{detail.balance}}</td>
+              <td>{{detail.averageAcquisitionPrice}}</td>
+              <td>{{detail.value}}</td>
+              <!-- <td>not supported yet</td> -->
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="row">
+        <div class="col-sm-1">
+          <label for="btn-profit">損益計算</label>
+          <button type="button" class="btn btn-primary" id="btn-profit">損益計算</button>
+        </div>
+        <div class="col-sm-3">
+          <label for="datetime-profit-from">対象日時 (from)</label>
+          <input type='text' class="form-control " id='datetime-profit-from' />
+        </div>
+        <div class="col-sm-3">
+          <label for="datetime-profit-to">対象日時 (to)</label>
+          <input type='text' class="form-control " id='datetime-profit-to' />
+        </div>
+      </div>
+      <h4><strong><p id="text-profit">対象期間の損益: </p></strong></h4>
+    </div>
+
+    <hr>
+
+    <div class="container">
+      <h3>注意、免責事項</h3>
+      <b>本アプリケーションは、日本の税制にのっとった計算を保証するものではありません。
+        本アプリケーションを利用することによって生ずるいかなる損害に対しても、作成者は一切責任を負いません。
+        確定申告は自己責任で行うようにしてください。</b>
+      <hr>
+
+      <h3>使用方法</h3>
+      準備中
+      <hr>
+
+      <h3>謝辞</h3>
+      本アプリケーションは、take-iwiwさんが開発した仮想通貨取引帳簿アプリをベースとし、
+      2017年の確定申告に限定して、各取引所の取引履歴(CSVファイル)から確定申告に必要な情報を計算するためのツールです。
+      コアの部分の開発はtake-iwiwさんが行っています。大変貴重なツールの公開をありがとうございます。この場を借りて御礼申し上げます。<br>
+      <a href="https://github.com/take-iwiw/CryptoCoinAccountBook/#寄付">take-iwiwさんへの寄付はこちらです</a>。
+      <hr>
+
+      <h3>支援</h3>
+      私(kenj0)の開発を支援いただける方は、本ページ下部のアフィリエイトからまだ登録していない取引所へ登録していただければありがたいです。
+      <hr>
+
+      <h3>問い合わせ</h3>
+      <p>本アプリ(2017年確定申告版)に関するお問い合わせは<a href="http://kenj0.hatenablog.com/entry/2018/01/01/000000">こちらのフォームから入力してください。</a></p>
+      <hr>
+
+      <h3>ToDo</h3>
+      <ul>
+        <li>取引の際の支払い手数料の適用</li>
+        <li>国内取引所bitFlyerの取引履歴入力対応</li>
+        <li>取引履歴のCSVダウンロード機能追加</li>
+      </ul>
+      <hr>
+
+      <h3>バージョン履歴</h3>
+      <p><b>[2018-Jan-07]</b>    初版(Beta版)</p>
+      <hr>
+
+      <table class="aff-table">
+        <tr>
+          <th><p><a href="https://coincheck.com/?c=e_BIUc4ZXt0" target="_blank"><img src="https://coincheck.com/images/affiliates/05_cc_banner_300x250.png" alt="ビットコイン取引高日本一の仮想通貨取引所 coincheck bitcoin" /></a></p></th>
+          <th><p><a href="https://zaif.jp?ac=30cz7vcufp" rel="nofollow"><img src="https://d2p8taqyjofgrq.cloudfront.net/images/affiliate/banner/zaif_A_300x250.png" /></a></p></th>
+          <th><p><a href="https://bitflyer.jp?bf=5wouahot" target="_blank"><img src="https://bitflyer.jp/Images/Affiliate/affi_04_300x250.gif?201709" alt="bitFlyer ビットコインを始めるなら安心・安全な取引所で" /></a></p></th>
+          <th><p><a href="https://www.binance.com/?ref=11315323" rel="nofollow"><img src="https://cdn-ak.f.st-hatena.com/images/fotolife/k/kenj0/20180106/20180106164343.png" alt="中級者以上がみんな使ってる仮想通貨取引所 Binance" /></a></p></th>
+        </tr>
+      </table>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="js/view.js"></script>
+    <script src="js/calculation.js"></script>
+    <script src="js/file.js"></script>
+    <script src="js/file_coincheck.js"></script>
+    <script src="js/file_binance.js"></script>
+    <script src="js/file_zaif.js"></script>
+    <script src="js/file_jpy_price.js"></script>
+    <script src="js/init.js"></script>
+
+  </body>
+</html>
