@@ -28,7 +28,8 @@ function loadMarketHistory(e, callback) {
     switch (document.getElementById("sel-market-file-type").selectedIndex) {
     case 0: l_history = loadCoincheckHistory(reader.result); break;
     case 1: l_history = loadZaifHistory(reader.result); break;
-    case 2: l_history = loadBinanceHistory(reader.result); break;
+    case 2: l_history = loadBitflyerHistory(reader.result); break;
+    case 3: l_history = loadBinanceHistory(reader.result); break;
     default: alert("Error: Illigal selection.");
     };
     if (l_history != null && 0 < l_history.length) {
