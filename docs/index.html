@@ -28,6 +28,7 @@
         <select class="form-control" id="sel-market-file-type">
           <option selected>coincheck -AllHistory- (CSV)</option>
           <option>Zaif -TradeHistory- (CSV)</option>
+          <option>bitflyer -TradeHistory- (CSV)</option>
           <option>Binance -TradeHistory- (CSV)</option>
           <!-- <option>Zaif -DepositHistory-</option> -->
           <!-- <option>Zaif -WithdrawHistory-</option> -->
@@ -224,13 +225,16 @@
       <h3>ToDo</h3>
       <ul>
         <li>取引の際の支払い手数料の適用</li>
-        <li>国内取引所bitFlyerの取引履歴入力対応</li>
+        <li><s>国内取引所bitFlyerの取引履歴入力対応</s>  ⇒ 対応しました(2018-Jan-14)</li>
         <li>取引履歴のCSVダウンロード機能追加</li>
+        <li>未対応取引所向けの共通エクセルシート対応</li>
+        <li>2016年以前の簿価の取引履歴への対応</li>
       </ul>
       <hr>
 
       <h3>バージョン履歴</h3>
-      <p><b>[2018-Jan-07]</b>    初版(Beta版)</p>
+      <p><b>    [2018-Jan-07]</b>    初版(Beta版)</p>
+      <p><b>    [2018-Jan-14]</b>    bitFlyerの取引履歴インポートに対応</p>
       <hr>
 
       <table class="aff-table">
@@ -255,6 +259,7 @@
     <script src="js/file_coincheck.js"></script>
     <script src="js/file_binance.js"></script>
     <script src="js/file_zaif.js"></script>
+    <script src="js/file_bitflyer.js"></script>
     <script src="js/file_jpy_price.js"></script>
     <script src="js/init.js"></script>
 
