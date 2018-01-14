@@ -26,10 +26,10 @@
       <h2>取引所CSVファイルのインポート</h2>
       <div class="col-sm-3">
         <select class="form-control" id="sel-market-file-type">
-          <option selected>coincheck -AllHistory- (CSV)</option>
-          <option>Zaif -TradeHistory- (CSV)</option>
-          <option>bitflyer -TradeHistory- (CSV)</option>
-          <option>Binance -TradeHistory- (CSV)</option>
+          <option selected>coincheck -AllHistory-</option>
+          <option>Zaif -TradeHistory-</option>
+          <option>bitFlyer -TradeHistory-</option>
+          <option>Binance -TradeHistory-</option>
           <!-- <option>Zaif -DepositHistory-</option> -->
           <!-- <option>Zaif -WithdrawHistory-</option> -->
           <!-- <option>Binance -DepositHistory-</option> -->
@@ -209,7 +209,7 @@
 
       <h3>謝辞</h3>
       本アプリケーションは、take-iwiwさんが開発した仮想通貨取引帳簿アプリをベースとし、
-      2017年の確定申告に限定して、各取引所の取引履歴(CSVファイル)から確定申告に必要な情報を計算するためのツールです。
+      2017年の確定申告に限定して、各取引所の取引履歴ファイルから確定申告に必要な情報を計算するためのツールです。
       コアの部分の開発はtake-iwiwさんが行っています。大変貴重なツールの公開をありがとうございます。この場を借りて御礼申し上げます。<br>
       <a href="https://github.com/take-iwiw/CryptoCoinAccountBook/#寄付">take-iwiwさんへの寄付はこちらです</a>。
       <hr>
@@ -235,6 +235,7 @@
       <h3>バージョン履歴</h3>
       <p><b>    [2018-Jan-07]</b>    初版(Beta版)</p>
       <p><b>    [2018-Jan-14]</b>    bitFlyerの取引履歴インポートに対応</p>
+      <p><b>    [2018-Jan-15]</b>    xls,xlsx形式のファイルのインポートに対応</p>
       <hr>
 
       <table class="aff-table">
@@ -251,6 +252,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.11.1/xlsx.full.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
     <script src="js/view.js"></script>
@@ -262,6 +264,7 @@
     <script src="js/file_bitflyer.js"></script>
     <script src="js/file_jpy_price.js"></script>
     <script src="js/init.js"></script>
+    <script src="js/load_xlsx.js"></script>
 
   </body>
 </html>

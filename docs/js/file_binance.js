@@ -4,33 +4,6 @@ var g_binance_eth_trade_list = ["NULSETH", "ASTETH", "EOSETH", "SNTETH", "MCOETH
 var g_binance_usdt_trade_list = ["BTCUSDT", "BCCUSDT", "LTCUSDT", "NEOUSDT", "BNBUSDT", "ETHUSDT"]
 
 
-function convertBinanceMarketCsv(csv_str) {
-  var buff = "[";
-  var lines = csv_str.split(/\r\n|\r|\n/);
-  if (0 < lines.length) {
-    var labels = lines[0].split(',');
-    for (var i=1; i<lines.length; ++i) {
-      var cells = lines[i].split(',');
-      if (cells.length == labels.length) {
-        if (1 < i) { buff += "," }
-        buff += "{";
-        for (var j=0; j<cells.length; ++j) {
-          if (0 < j) { buff += "," }
-          buff += "\"" + labels[j] + "\"" + ":";
-          if ((cells[j] != "" && isFinite(cells[j])) || cells[j] == "true" || cells[j] == "false") {
-            buff += cells[j];
-          } else {
-            buff += "\"" + cells[j] + "\"";
-          }
-        }
-        buff += "}";
-      }
-    }
-  }
-  buff += "]";
-  return buff;
-}
-
 function formatBinanceDateTime(datetime) {
   // console.log(datetime);
   dateObj = new Date(datetime + " UTC");  // convert to Local time
@@ -44,9 +17,7 @@ function formatBinanceDateTime(datetime) {
   return buff;
 };
 
-function loadBinanceHistory(csv_str) {
-  var binance_history = JSON.parse(convertBinanceMarketCsv(csv_str));
-  // console.log(binance_history);
+function loadBinanceHistory(binance_history) {
   var l_history = [];
   var first_alert = true;
   for (var i=0; i<binance_history.length; ++i) {
