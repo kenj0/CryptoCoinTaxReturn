@@ -30,6 +30,7 @@
           <option>Zaif -TradeHistory-</option>
           <option>bitFlyer -TradeHistory-</option>
           <option>Binance -TradeHistory-</option>
+          <option>Others -TradeHistory-</option>
           <!-- <option>Zaif -DepositHistory-</option> -->
           <!-- <option>Zaif -WithdrawHistory-</option> -->
           <!-- <option>Binance -DepositHistory-</option> -->
@@ -38,6 +39,8 @@
       </div>
       <input type="file" id="market-history-load" style="display:none;">
       <button type="button" class="btn btn-primary" onClick="$('#market-history-load').click();">Open</button>
+      <hr>
+      <p>  未対応取引所向け: <a href="sample/共通取引履歴テンプレート.xlsx">共通取引履歴テンプレート.xlsx</a>  (Others -TradeHistory- でインポート)</p>
       <!-- <hr> -->
     </div>
 <!--
@@ -227,7 +230,7 @@
         <li>取引の際の支払い手数料の適用</li>
         <li><s>国内取引所bitFlyerの取引履歴入力対応</s>  ⇒ 対応しました(2018-Jan-14)</li>
         <li>取引履歴のCSVダウンロード機能追加</li>
-        <li>未対応取引所向けの共通エクセルシート対応</li>
+        <li><s>未対応取引所向けの共通エクセルシート対応</s>  ⇒ 対応しました(2018-Jan-6)</li>
         <li>2016年以前の簿価の取引履歴への対応</li>
       </ul>
       <hr>
@@ -236,6 +239,7 @@
       <p><b>    [2018-Jan-07]</b>    初版(Beta版)</p>
       <p><b>    [2018-Jan-14]</b>    bitFlyerの取引履歴インポートに対応</p>
       <p><b>    [2018-Jan-15]</b>    xls,xlsx形式のファイルのインポートに対応</p>
+      <p><b>    [2018-Jan-16]</b>    共通取引履歴ファイルのインポートに対応</p>
       <hr>
 
       <table class="aff-table">
@@ -262,6 +266,7 @@
     <script src="js/file_binance.js"></script>
     <script src="js/file_zaif.js"></script>
     <script src="js/file_bitflyer.js"></script>
+    <script src="js/file_others.js"></script>
     <script src="js/file_jpy_price.js"></script>
     <script src="js/init.js"></script>
     <script src="js/load_xlsx.js"></script>

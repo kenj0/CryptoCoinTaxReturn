@@ -34,6 +34,7 @@ function loadMarketHistory(e, callback) {
         case 1: l_history = loadZaifHistory(convertCsvToJson(reader.result)); break;
         case 2: l_history = loadBitflyerHistory(convertCsvToJson(reader.result)); break;
         case 3: l_history = loadBinanceHistory(convertCsvToJson(reader.result)); break;
+        case 4: l_history = loadOthersHistory(convertCsvToJson(reader.result)); break;
         default: alert("Error: Illigal selection.");
         };
         if (l_history != null && 0 < l_history.length) {
@@ -54,6 +55,7 @@ function loadMarketHistory(e, callback) {
           case 1: l_history = loadZaifHistory(imported_history); break;
           case 2: l_history = loadBitflyerHistory(imported_history); break;
           case 3: l_history = loadBinanceHistory(imported_history); break;
+          case 4: l_history = loadOthersHistory(imported_history); break;
           default: alert("Error: Illigal selection.");
           };
         }
