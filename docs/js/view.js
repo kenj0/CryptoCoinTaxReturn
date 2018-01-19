@@ -88,6 +88,7 @@ $(function() {
 });
 
 /* 「取引の入力」関連 */
+/*
 $(function() {
   $('#flag-trans-isAltAlt').on('change', function () {
     if ($(this).is(':checked')) {
@@ -113,7 +114,7 @@ $(function() {
     clearTransaction();
   });
 });
-
+*/
 
 /*** その他 ***/
 /* カレンダー用 */
@@ -121,5 +122,5 @@ $(function () {
   // $.datetimepicker.setLocale('ja');  // todo: error occurs...
   $('#datetime-profit-from').datetimepicker();
   $('#datetime-profit-to').datetimepicker();
-  $('#datetime-trans').datetimepicker();
+  // $('#datetime-trans').datetimepicker();
 });

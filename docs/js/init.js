@@ -27,14 +27,21 @@ $(function() {
   $('#flag-trans-isAltAlt').trigger("change");
 
   var today = new Date();
-  $('#datetime-trans').val(today.toString());
-  $('#datetime-profit-to').val(today.toString());
-  today.setMonth(0);
-  today.setDate(1);
-  today.setHours(0);
-  today.setMinutes(0);
-  today.setSeconds(0);
-  $('#datetime-profit-from').val(today.toString());
+  // $('#datetime-trans').val(today.toString());
+  var date = new Date();
+  date.setYear(2017);
+  date.setMonth(1-1);
+  date.setDate(1);
+  date.setHours(0);
+  date.setMinutes(0);
+  date.setSeconds(0);
+  $('#datetime-profit-from').val(date.toString());
+  date.setMonth(12-1);
+  date.setDate(31);
+  date.setHours(23);
+  date.setMinutes(59);
+  date.setSeconds(59);
+  $('#datetime-profit-to').val(date.toString());
 
   updateInputDataList();
 });

@@ -1,3 +1,4 @@
+/*
 function addTransaction() {
   var transaction = {
     "datetime": new Date($.trim($("#datetime-trans").val())).toLocaleString(),
@@ -55,6 +56,7 @@ function clearTransaction() {
   $("#text-trans-marketplace").val("");
   $("#text-trans-comment").val("");
 }
+*/
 
 function clearHistory() {
   // g_history = [
