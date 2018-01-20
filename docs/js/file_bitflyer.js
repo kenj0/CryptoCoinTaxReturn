@@ -50,9 +50,12 @@ function loadBitflyerHistory(bitflyer_history) {
       if (target_coin != null) {
         transaction["buyCoin"] = target_coin;
         transaction["sellCoin"] = key_coin;
-        transaction["buyAmount"] = bitflyer_history[i][target_coin];
+        transaction["buyAmount"] = bitflyer_history[i][target_coin] + bitflyer_history[i]["手数料(" + target_coin + ")"];
         transaction["sellAmount"] = -1 * bitflyer_history[i][key_coin];
         transaction["comment"] += ", " + "rate=" + bitflyer_history[i].価格;
+        if (0 < -1 * bitflyer_history[i]["手数料(" + target_coin + ")"]) {
+          transaction["comment"] += ", fee=" + (-1 * bitflyer_history[i]["手数料(" + target_coin + ")"]) + target_coin;
+        }
         // console.log(bitflyer_history[i]);
         // console.log(transaction);
         l_history.push(transaction);
@@ -64,8 +67,11 @@ function loadBitflyerHistory(bitflyer_history) {
         transaction["buyCoin"] = key_coin;
         transaction["sellCoin"] = target_coin;
         transaction["buyAmount"] = bitflyer_history[i][key_coin];
-        transaction["sellAmount"] = -1 * bitflyer_history[i][target_coin];
+        transaction["sellAmount"] = -1 * (bitflyer_history[i][target_coin] + bitflyer_history[i]["手数料(" + target_coin + ")"]);
         transaction["comment"] += ", " + "rate=" + bitflyer_history[i].価格;
+        if (0 < -1 * bitflyer_history[i]["手数料(" + target_coin + ")"]) {
+          transaction["comment"] += ", fee=" + (-1 * bitflyer_history[i]["手数料(" + target_coin + ")"]) + target_coin;
+        }
         // console.log(bitflyer_history[i]);
         // console.log(transaction);
         l_history.push(transaction);
