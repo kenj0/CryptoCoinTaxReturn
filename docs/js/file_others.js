@@ -32,17 +32,30 @@ function loadOthersHistory(others_history) {
   var first_alert = true;
   for (var i=0; i<others_history.length; ++i) {
     // console.log(others_history[i]);
+    others_history[i]["購入通貨量"] = parseFloat(others_history[i]["購入通貨量"]);
+    others_history[i]["売却通貨量"] = parseFloat(others_history[i]["売却通貨量"]);
+    others_history[i]["手数料通貨量"] = parseFloat(others_history[i]["手数料通貨量"]);
+    others_history[i]["基軸通貨時価(JPY/基軸通貨)"] = parseFloat(others_history[i]["基軸通貨時価(JPY/基軸通貨)"]);
     var transaction = {
-      "datetime" : formatOthersDateTime(others_history[i].取引日時),
-      "buyCoin" : others_history[i].購入通貨,
-      "buyAmount" : others_history[i].購入通貨量,
-      "sellCoin" : others_history[i].売却通貨,
-      "sellAmount" : others_history[i].売却通貨量,
+      "datetime" : formatOthersDateTime(others_history[i]["取引日時"]),
+      "buyCoin" : others_history[i]["購入通貨"],
+      "buyAmount" : others_history[i]["購入通貨量"],
+      "sellCoin" : others_history[i]["売却通貨"],
+      "sellAmount" : others_history[i]["売却通貨量"],
       "isAltTrade" : false,
       "altJPY" : "---",
       "marketplace" : others_history[i]["取引所名(or販売所名)"],
       "comment" : (others_history[i]["注文ID"] != undefined) ? ("[" + others_history[i]["注文ID"] + "]") : ""
     };
+
+    if (others_history[i]["手数料通貨"] != undefined && others_history[i]["手数料通貨量"] != undefined) {
+      if (others_history[i]["手数料通貨"] == transaction["buyCoin"]) {
+        transaction["buyAmount"] -= Math.abs(others_history[i]["手数料通貨量"]);
+      }
+      if (others_history[i]["手数料通貨"] == transaction["sellCoin"]) {
+        transaction["sellAmount"] += Math.abs(others_history[i]["手数料通貨量"]);
+      }
+    }
 
     if (transaction["buyCoin"] == "JPY") {
       if (transaction["comment"] != "") { transaction["comment"] += ", " }
@@ -82,7 +95,6 @@ function loadOthersHistory(others_history) {
           transaction["altJPY"] = buy_coin_price * transaction["buyAmount"];
           if (transaction["comment"] != "") { transaction["comment"] += ", " }
           transaction["comment"] += transaction["buyCoin"] + "/JPY=" + buy_coin_price;
-          console.log(transaction);
           l_history.push(transaction);
         }
         else if (sell_coin_price != null) {
@@ -96,6 +108,13 @@ function loadOthersHistory(others_history) {
             alert("Error: 価格情報を参照できないため、基軸通貨情報を追加してください。(" + (others_history[i].__rowNum__ + 1) + "行目)"); first_alert = false;
           }
         }
+      }
+    }
+
+    if (others_history[i]["手数料通貨"] != undefined && others_history[i]["手数料通貨量"] != undefined) {
+      if ((others_history[i]["手数料通貨"] == transaction["buyCoin"]) ||
+          (others_history[i]["手数料通貨"] == transaction["sellCoin"])) {
+        transaction["comment"] += ", fee=" + Math.abs(others_history[i]["手数料通貨量"]) + others_history[i]["手数料通貨"];
       }
     }
   }
