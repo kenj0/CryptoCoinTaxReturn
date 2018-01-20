@@ -45,7 +45,7 @@ app.controller("myCtrl", function($scope) {
       if(coin != "JPY") {
         portfolio.push({
           "coin": coin,
-          "balance": g_historyCalc[g_historyCalc.length - 1]["balance_" + coin].toLocaleString(),
+          "balance": g_historyCalc[g_historyCalc.length - 1]["balance_" + coin].toLocaleString("ja-JP", {minimumSignificantDigits : 5}),
           "value": g_historyCalc[g_historyCalc.length - 1]["value_" + coin].toLocaleString(),
           "averageAcquisitionPrice": g_historyCalc[g_historyCalc.length - 1]["averageAcquisitionPrice_" + coin].toLocaleString(),
         });

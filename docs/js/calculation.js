@@ -74,13 +74,13 @@ function generateHistoryStr()
   var index = 0;
   g_historyStr = [];
   g_historyCalc.forEach(function(transactionCalc) {
-    var balance = transactionCalc["buyCoin"] == "JPY" ? "" : transactionCalc["buyCoin"] + ": " + transactionCalc["balance_" + transactionCalc["buyCoin"]].toLocaleString() + "\n";
-    balance    += transactionCalc["sellCoin"] == "JPY" ? "" : transactionCalc["sellCoin"] + ": " + transactionCalc["balance_" + transactionCalc["sellCoin"]].toLocaleString();
+    var balance = transactionCalc["buyCoin"] == "JPY" ? "" : transactionCalc["buyCoin"] + ": " + transactionCalc["balance_" + transactionCalc["buyCoin"]].toLocaleString("ja-JP", {minimumSignificantDigits : 5}) + "\n";
+    balance    += transactionCalc["sellCoin"] == "JPY" ? "" : transactionCalc["sellCoin"] + ": " + transactionCalc["balance_" + transactionCalc["sellCoin"]].toLocaleString("ja-JP", {minimumSignificantDigits : 5});
     var value = transactionCalc["buyCoin"] == "JPY" ? "" : transactionCalc["buyCoin"] + ": " + Math.round(transactionCalc["value_" + transactionCalc["buyCoin"]]).toLocaleString() + "\n";
     value    += transactionCalc["sellCoin"] == "JPY" ? "" : transactionCalc["sellCoin"] + ": " + Math.round(transactionCalc["value_" + transactionCalc["sellCoin"]]).toLocaleString();
     var averageAcquisitionPrice = transactionCalc["buyCoin"] == "JPY" ? "" : transactionCalc["buyCoin"] + ": " + transactionCalc["averageAcquisitionPrice_" + transactionCalc["buyCoin"]].toLocaleString() + "\n";
     averageAcquisitionPrice    += transactionCalc["sellCoin"] == "JPY" ? "" : transactionCalc["sellCoin"] + ": " + transactionCalc["averageAcquisitionPrice_" + transactionCalc["sellCoin"]].toLocaleString();
-    var altJpy = isNaN(transactionCalc["altJPY"]) ? "---" : Number(transactionCalc["altJPY"]).toLocaleString();
+    var altJpy = isNaN(transactionCalc["altJPY"]) ? "---" : Number(transactionCalc["altJPY"]).toLocaleString("ja-JP", {minimumSignificantDigits : 5});
 
     g_historyStr.push({
       "index": index,
@@ -88,9 +88,9 @@ function generateHistoryStr()
       "marketplace": transactionCalc["marketplace"],
       "comment": transactionCalc["comment"],
       "buyCoin": transactionCalc["buyCoin"],
-      "buyAmount": Number(transactionCalc["buyAmount"]).toLocaleString(),
+      "buyAmount": Number(transactionCalc["buyAmount"]).toLocaleString("ja-JP", {minimumSignificantDigits : 5}),
       "sellCoin": transactionCalc["sellCoin"],
-      "sellAmount": Number(transactionCalc["sellAmount"]).toLocaleString(),
+      "sellAmount": Number(transactionCalc["sellAmount"]).toLocaleString("ja-JP", {minimumSignificantDigits : 5}),
       "isAltTrade": transactionCalc["isAltTrade"],
       "altJPY": altJpy,
       "balance": balance,
