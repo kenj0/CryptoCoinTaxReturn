@@ -110,9 +110,11 @@
 
     <div class="container">
       <h2>取引履歴</h2>
-      <div class="table-responsive">
+      <button type="button" class="btn btn-secondary" id="btn-history-clear">Clear History</button>
+      <a href="#"  type="button" class="btn btn-success" id="btn-history-download">Download CSV</a>
+      <h5></h5>
+      <div style="max-height: 600px; overflow: auto; border: 1px solid #aaa; padding: 5px;">
         <input type="button" id="btn-update-history" ng-click="updateHistory()" style="display:none;">
-        <button type="button" class="btn btn-secondary" id="btn-history-clear">クリア</button>
         <table class="table table-striped table-hover">
           <thead>
             <tr>

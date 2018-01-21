@@ -102,6 +102,27 @@ function generateHistoryStr()
   });
 }
 
+function generateHistoryCSV() {
+  var buff = "#,日時,取引所,購入通貨名,購入通貨数量,売却通貨名,売却通貨数量,仮想通貨間取引,売却通貨の時価[円],残高,簿価 [円],平均取得価額 [円],利益 [円],備考\n";
+  for (i=0; i<g_historyStr.length; i++) {
+    buff += g_historyStr[i].index;
+    buff += "," + g_historyStr[i].datetime;
+    buff += "," + g_historyStr[i].marketplace;
+    buff += "," + g_historyStr[i].buyCoin;
+    buff += "," + g_historyStr[i].buyAmount.replace(/,/g, "");
+    buff += "," + g_historyStr[i].sellCoin;
+    buff += "," + g_historyStr[i].sellAmount.replace(/,/g, "");
+    buff += "," + ((g_historyStr[i].isAltTrade) ? "Yes" : "No");
+    buff += "," + g_historyStr[i].altJPY.replace(/,/g, "");
+    buff += "," + g_historyStr[i].balance.replace(/\n/g, "  ").replace(/,/g, "");
+    buff += "," + g_historyStr[i].value.replace(/\n/g, "  ").replace(/,/g, "");
+    buff += "," + g_historyStr[i].averageAcquisitionPrice.replace(/\n/g, "  ").replace(/,/g, "");
+    buff += "," + g_historyStr[i].profit;
+    buff += "," + g_historyStr[i].comment.replace(/,/g, "、") + "\n";
+  }
+  return buff;
+}
+
 /* 1つのトランザクションに対して、平均取得価格などを計算して返す */
 function calcOneTransaction(coinList, transactionStr, previousTransactionCalc) {
   var transaction = JSON.parse(transactionStr);

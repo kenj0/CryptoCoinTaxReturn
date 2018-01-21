@@ -19,6 +19,18 @@ function saveHistory() {
   saveElem.setAttribute("download", "History_" + new Date());
 }
 
+function downloadCSV() {
+  var bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+  // var blob = new Blob([ bom, convertJsonToCsv(g_historyStr) ], { "type" : "text/csv" });
+  var blob = new Blob([ bom, generateHistoryCSV() ], { "type" : "text/csv" });
+  if (window.navigator.msSaveBlob) {
+    window.navigator.msSaveBlob(blob, "tax_return_2017.csv");
+    window.navigator.msSaveOrOpenBlob(blob, "tax_return_2017.csv");
+  } else {
+    document.getElementById("download").href = window.URL.createObjectURL(blob);
+  }
+}
+
 function loadMarketHistory(e, callback) {
   var selectedFile = e.target.files[0];
   var splitted_name = selectedFile.name.split('.');
@@ -98,4 +110,14 @@ function convertCsvToJson(csv_str) {
   }
   buff += "]";
   return JSON.parse(buff);
+}
+
+function convertJsonToCsv(json) {
+  var header = Object.keys(json[0]).join(',') + "\n";
+  var body = json.map(function(d){
+    return Object.keys(d).map(function(key) {
+      return d[key];
+    }).join(',');
+  }).join("\n");
+  return header + body;
 }

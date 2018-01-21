@@ -78,6 +78,10 @@ $(function() {
       $('#btn-update-history').click();
     });
 
+    $('#btn-history-download').on('click', function () {
+      downloadCSV();
+    });
+
     $('#btn-profit').on('click', function () {
       calcProfit();
     });
