@@ -95,6 +95,16 @@ function convertBinanceFeeTransaction(datetime, mainTransaction, fee, feeCoin, f
 
   var fee_coin_price = getJpyPrice(feeCoin, mainTransaction["datetime"].split(" ")[0]);
   if (fee_coin_price != null) {
+    if (mainTransaction["buyCoin"] == feeCoin) {
+      mainTransaction["buyAmount"] -= fee;
+      mainTransaction["comment"] += " (transaction fee=" + fee + feeCoin + " included.)";
+      return {mainTransaction: mainTransaction, feeTransaction: null, first_alert: first_alert};
+    }
+    if (mainTransaction["sellCoin"] == feeCoin) {
+      mainTransaction["sellAmount"] += fee;
+      mainTransaction["comment"] += " (transaction fee=" + fee + feeCoin + " included.)";
+      return {mainTransaction: mainTransaction, feeTransaction: null, first_alert: first_alert};
+    }
     fee_rate = (fee * fee_coin_price) / (fee * fee_coin_price + mainTransaction["altJPY"]);
     feeTransaction["buyAmount"] = mainTransaction["buyAmount"] * fee_rate;
     mainTransaction["buyAmount"] = mainTransaction["buyAmount"] * (1 - fee_rate);
@@ -106,7 +116,7 @@ function convertBinanceFeeTransaction(datetime, mainTransaction, fee, feeCoin, f
     if (first_alert) {
       alert("Error: Could not apply " + feeCoin + " price."); first_alert = false;
     }
-    return {mainTransaction: mainTransaction, feeTransaction: null, first_alert: first_alert};
+    return {mainTransaction: null, feeTransaction: null, first_alert: first_alert};
   }
 };
 
@@ -124,13 +134,13 @@ function loadBinanceHistory(binance_history) {
                                          binance_history[i]["Fee Coin"],
                                          first_alert);
       first_alert = ret.first_alert;
-      var feeTransaction = ret.feeTransaction;
-      if (feeTransaction != null) {
-        l_history.push(mainTransaction);
-        l_history.push(feeTransaction);
+      if (ret.mainTransaction != null) {
+        l_history.push(ret.mainTransaction);
+      }
+      if (ret.feeTransaction != null) {
+        l_history.push(ret.feeTransaction);
       }
     }
-
   }
   return l_history;
 }
