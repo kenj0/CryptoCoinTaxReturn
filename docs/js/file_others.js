@@ -45,7 +45,7 @@ function loadOthersHistory(others_history) {
       "isAltTrade" : false,
       "altJPY" : "---",
       "marketplace" : others_history[i]["取引所名(or販売所名)"],
-      "comment" : (others_history[i]["注文ID"] != undefined) ? ("[" + others_history[i]["注文ID"] + "]") : ""
+      "comment" : (others_history[i]["注文ID"] != undefined && 0 < others_history[i]["注文ID"] != "") ? ("[" + others_history[i]["注文ID"] + "]") : ""
     };
 
     if (others_history[i]["手数料通貨"] != undefined && others_history[i]["手数料通貨量"] != undefined) {
