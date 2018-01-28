@@ -86,6 +86,7 @@ function loadMarketHistory(e, callback) {
 
 function convertCsvToJson(csv_str) {
   // Note: asume to that first line is caption.
+  csv_str = csv_str.replace(/"/g, "");  // at first, delete "
   var buff = "[";
   var lines = csv_str.split(/\r\n|\r|\n/);
   if (0 < lines.length) {

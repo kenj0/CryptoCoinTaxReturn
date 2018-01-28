@@ -2,6 +2,8 @@ var g_zaif_coin_list = ["JPY", "BTC", "BCH", "ETH", "XEM", "MONA", "ZAIF", "XCP"
 
 function formatZaifDateTime(datetime) {
   // console.log(datetime);
+  datetime = datetime.replace(/\.[0-9]+$/, "");  // trim under second
+  // console.log(datetime);
   dateObj = new Date(datetime);
   buff = dateObj.getFullYear();
   buff += "/" + ('0' + (dateObj.getMonth() + 1)).slice(-2);
@@ -29,33 +31,33 @@ function loadZaifHistory(zaif_history) {
       "marketplace" : "Zaif",
       "comment" : ""
     };
-    var key_coin = zaif_history[i].価格.replace(/[0-9\.]+/, "");
-    var key_amount = parseFloat(zaif_history[i].価格.replace(/[A-Z]+/, ""));
-    var target_coin = zaif_history[i].数量.replace(/[0-9\.]+/, "");
-    var target_amount = parseFloat(zaif_history[i].数量.replace(/[A-Z]+/, ""));
-    if (g_zaif_coin_list.indexOf(key_coin) == -1 && first_alert) {
-      alert("Error: Could not parse 価格 column."); first_alert = false;
-    }
+    var target_coin = zaif_history[i].マーケット.toUpperCase().match(/^[A-Z\.]+/)[0];
+    var target_amount = parseFloat(zaif_history[i].数量);
+    var key_coin = zaif_history[i].マーケット.toUpperCase().match(/[A-Z\.]+$/)[0];
+    var key_amount = parseFloat(zaif_history[i].価格);
     if (g_zaif_coin_list.indexOf(target_coin) == -1 && first_alert) {
       alert("Error: Could not parse 数量 column."); first_alert = false;
     }
-
-    if (getCoinAlias(key_coin) != null) {
-      key_coin = getCoinAlias(key_coin);
+    if (g_zaif_coin_list.indexOf(key_coin) == -1 && first_alert) {
+      alert("Error: Could not parse 価格 column."); first_alert = false;
     }
+
     if (getCoinAlias(target_coin) != null) {
       target_coin = getCoinAlias(target_coin);
     }
+    if (getCoinAlias(key_coin) != null) {
+      key_coin = getCoinAlias(key_coin);
+    }
 
     var rate = key_amount;
-    if (zaif_history[i].注文 == "買い") {
+    if (zaif_history[i].取引種別 == "bid") {  // buy
       transaction["buyCoin"] = target_coin;
       transaction["buyAmount"] = target_amount;
       transaction["sellCoin"] = key_coin;
       transaction["sellAmount"] = target_amount * rate;
       transaction["comment"] = "rate=" + rate;
 
-    } else if (zaif_history[i].注文 == "売り") {
+    } else if (zaif_history[i].取引種別 == "ask") {  // sell
       transaction["buyCoin"] = key_coin;
       transaction["buyAmount"] = target_amount * rate;
       transaction["sellCoin"] = target_coin;
@@ -63,7 +65,7 @@ function loadZaifHistory(zaif_history) {
       transaction["comment"] = "rate=" + rate;
     } else {
       if (first_alert) {
-        alert("Error: Could not parse 注文 column."); first_alert = false;
+        alert("Error: Could not parse 取引種別 column."); first_alert = false;
       }
     }
 
@@ -71,9 +73,9 @@ function loadZaifHistory(zaif_history) {
       var key_coin_price = getJpyPrice(key_coin, transaction["datetime"].split(" ")[0]);
       if (key_coin_price != null) {
         transaction["isAltTrade"] = true;
-        if (zaif_history[i].注文 == "買い") {
+        if (zaif_history[i].取引種別 == "bid") {  // buy
           transaction["altJPY"] = key_coin_price * transaction["sellAmount"];
-        } else if (zaif_history[i].注文 == "売り") {
+        } else if (zaif_history[i].取引種別 == "ask") {  // sell
           transaction["altJPY"] = key_coin_price * transaction["buyAmount"];
         }
         transaction["comment"] += " " + key_coin + "/JPY=" + key_coin_price;
