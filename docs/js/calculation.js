@@ -129,47 +129,55 @@ function calcOneTransaction(coinList, transactionStr, previousTransactionCalc) {
   var transactionCalc = transaction;
 
   /* 全通貨に対して明細を作る。取引していない通貨に対しても処理するので遅い(todo) */
-  coinList.forEach(function(coin) {
-    /* 今回の取引内容を通貨別に分ける */
-    if (coin == transaction["buyCoin"]) {
-      transactionCalc["trade_" + coin] = Number(transaction["buyAmount"]);
-    } else if (coin == transaction["sellCoin"]) {
-      transactionCalc["trade_" + coin] = -1 * Number(transaction["sellAmount"]);
-    } else {
-      transactionCalc["trade_" + coin] = 0;
-    }
-  });
+
   if (transaction["isAltTrade"]) {
     transactionCalc["trade_" + "JPY"] = Number(transaction["altJPY"]);
+  } else {
+    if (transaction["buyCoin"] == "JPY") {
+      transactionCalc["trade_" + "JPY"] = Number(transaction["buyAmount"]);
+    } else if (transaction["sellCoin"] == "JPY") {
+      transactionCalc["trade_" + "JPY"] = Number(transaction["sellAmount"]);
+    } else {
+      alert("Error: Need to set JPY Amount for Altcoin trade.");
+    }
   }
 
   coinList.forEach(function(coin) {
-    /* 今回の残高 = 今回の取引量 + 前回までの残高 */
-    transactionCalc["balance_" + coin] = transactionCalc["trade_" + coin]  + (previousTransactionCalc == null ? 0 : Number(previousTransactionCalc["balance_" + coin]));
-
-    /* 今回の取引完了時の価値 */
+    /* 保有量の更新 */
     if (coin == transaction["buyCoin"]) {
-      /* 買いの場合: 今回の取引完了時の価値 = 前回までの価値 + 今回の購入額(JPY相当) */
-      transactionCalc["value_" + coin] = (previousTransactionCalc == null ? 0 : Number(previousTransactionCalc["value_" + coin])) + Math.abs(transactionCalc["trade_" + "JPY"]);
+      transactionCalc["balance_" + coin] = (previousTransactionCalc == null ? 0 : Number(previousTransactionCalc["balance_" + coin])) + Number(transaction["buyAmount"]);
     } else if (coin == transaction["sellCoin"]) {
-      /* 売りの場合: 今回の取引完了時の価値 = 前回までの平均取得価格 * 現時点で保有しているコイン数量 */
-      transactionCalc["value_" + coin] = (previousTransactionCalc == null ? 0 : Number(previousTransactionCalc["averageAcquisitionPrice_" + coin])) * transactionCalc["balance_" + coin];
+      transactionCalc["balance_" + coin] = (previousTransactionCalc == null ? 0 : Number(previousTransactionCalc["balance_" + coin])) - Number(transaction["sellAmount"]);
     } else {
-      /* 取引がなかった通貨: 前回と同じ値 */
-      transactionCalc["value_" + coin] = (previousTransactionCalc == null ? 0 : Number(previousTransactionCalc["value_" + coin]));
+      transactionCalc["balance_" + coin] = (previousTransactionCalc == null ? 0 : Number(previousTransactionCalc["balance_" + coin]));
     }
 
-    /* 今回の取引完了時の平均取得価格(移動平均) */
-    transactionCalc["averageAcquisitionPrice_" + coin] = transactionCalc["balance_" + coin] == 0 ? 0 : transactionCalc["value_" + coin] / transactionCalc["balance_" + coin];
+    /* 平均取得価格の更新(買いの場合のみ) */
+    if (coin == transaction["buyCoin"]) {
+      /* 平均取得価額(t) = (平均取得価額(t-1)*保有量(t-1)+取得価額(t)) / 保有量(t) */
+      var previousValue = (previousTransactionCalc == null ? 0 : (Number(previousTransactionCalc["averageAcquisitionPrice_" + coin]) * Number(previousTransactionCalc["balance_" + coin])));
+      transactionCalc["averageAcquisitionPrice_" + coin] = (previousValue + Math.abs(transactionCalc["trade_" + "JPY"])) / transactionCalc["balance_" + coin];
+    } else {
+      transactionCalc["averageAcquisitionPrice_" + coin] = (previousTransactionCalc == null ? 0 : previousTransactionCalc["averageAcquisitionPrice_" + coin]);
+    }
+
+    /* 簿価の更新 */
+    /* 簿価(t) = 平均取得価額(t) * 保有量(t) */
+    transactionCalc["value_" + coin] = transactionCalc["averageAcquisitionPrice_" + coin] * transactionCalc["balance_" + coin];
   });
 
+  /* 利益の更新 */
+  /* 利益 = 売却価額 - 平均取得価格 * 取引量 */
   transactionCalc["profit"] = 0;
-  coinList.forEach(function(coin) {
-    /* 利益 = 今回の取得JPY - 平均取得価格*売却したコイン数 */
-    if ((coin == transaction["sellCoin"]) && (coin != "JPY")) { /* JPYからの直接購入以外は全て利益を計算する */
-      transactionCalc["profit"] = Math.abs(transactionCalc["trade_" + "JPY"]) - (previousTransactionCalc == null ? 0 : Number(previousTransactionCalc["averageAcquisitionPrice_" + coin])) * Number(transaction["sellAmount"]);
+  if (transaction["isAltTrade"] == false) {
+    /* 基軸通貨がJPYの時は、売却される仮想通貨に対してのみ利益計算 */
+    if (transaction["buyCoin"] == "JPY") {
+      transactionCalc["profit"] = transactionCalc["trade_" + "JPY"] - transactionCalc["averageAcquisitionPrice_" + transaction["sellCoin"]] * Math.abs(Number(transaction["sellAmount"]));
     }
-  });
+  } else {
+    /* 基軸通貨が仮想通貨の時は、売却される通貨に対してのみ利益計算 */
+    transactionCalc["profit"] = transactionCalc["trade_" + "JPY"] - transactionCalc["averageAcquisitionPrice_" + transaction["sellCoin"]] * Math.abs(Number(transaction["sellAmount"]));
+  }
 
   return JSON.stringify(transactionCalc);
 }
