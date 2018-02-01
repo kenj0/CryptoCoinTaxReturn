@@ -40,7 +40,7 @@ function loadBitflyerHistory(bitflyer_history) {
       "sellAmount" : 0,
       "isAltTrade" : false,
       "altJPY" : "---",
-      "marketplace" : "Bitflyer",
+      "marketplace" : "bitFlyer",
       "comment" : ("[" + bitflyer_history[i]["注文 ID"] + "]")
     };
 

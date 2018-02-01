@@ -74,18 +74,28 @@ function generateHistoryStr()
   var index = 0;
   g_historyStr = [];
   g_historyCalc.forEach(function(transactionCalc) {
-    var balance = transactionCalc["buyCoin"] == "JPY" ? "" : transactionCalc["buyCoin"] + ": " + transactionCalc["balance_" + transactionCalc["buyCoin"]].toLocaleString("ja-JP", {minimumSignificantDigits : 5}) + "\n";
-    balance    += transactionCalc["sellCoin"] == "JPY" ? "" : transactionCalc["sellCoin"] + ": " + transactionCalc["balance_" + transactionCalc["sellCoin"]].toLocaleString("ja-JP", {minimumSignificantDigits : 5});
-    var value = transactionCalc["buyCoin"] == "JPY" ? "" : transactionCalc["buyCoin"] + ": " + Math.round(transactionCalc["value_" + transactionCalc["buyCoin"]]).toLocaleString() + "\n";
-    value    += transactionCalc["sellCoin"] == "JPY" ? "" : transactionCalc["sellCoin"] + ": " + Math.round(transactionCalc["value_" + transactionCalc["sellCoin"]]).toLocaleString();
-    var averageAcquisitionPrice = transactionCalc["buyCoin"] == "JPY" ? "" : transactionCalc["buyCoin"] + ": " + transactionCalc["averageAcquisitionPrice_" + transactionCalc["buyCoin"]].toLocaleString() + "\n";
-    averageAcquisitionPrice    += transactionCalc["sellCoin"] == "JPY" ? "" : transactionCalc["sellCoin"] + ": " + transactionCalc["averageAcquisitionPrice_" + transactionCalc["sellCoin"]].toLocaleString();
+    var balance = (transactionCalc["buyCoin"] == "JPY" || transactionCalc["buyCoin"] == "") ? ""
+                 : transactionCalc["buyCoin"] + ": " + transactionCalc["balance_" + transactionCalc["buyCoin"]].toLocaleString("ja-JP", {minimumSignificantDigits : 5}) + "\n";
+    balance    += (transactionCalc["sellCoin"] == "JPY") ? ""
+                 : transactionCalc["sellCoin"] + ": " + transactionCalc["balance_" + transactionCalc["sellCoin"]].toLocaleString("ja-JP", {minimumSignificantDigits : 5});
+    var value = (transactionCalc["buyCoin"] == "JPY" ||transactionCalc["buyCoin"] == "") ? ""
+               : transactionCalc["buyCoin"] + ": " + Math.round(transactionCalc["value_" + transactionCalc["buyCoin"]]).toLocaleString() + "\n";
+    value    += (transactionCalc["sellCoin"] == "JPY") ? ""
+               : transactionCalc["sellCoin"] + ": " + Math.round(transactionCalc["value_" + transactionCalc["sellCoin"]]).toLocaleString();
+    var averageAcquisitionPrice = (transactionCalc["buyCoin"] == "JPY" || transactionCalc["buyCoin"] == "") ? ""
+                                 : transactionCalc["buyCoin"] + ": " + transactionCalc["averageAcquisitionPrice_" + transactionCalc["buyCoin"]].toLocaleString() + "\n";
+    averageAcquisitionPrice    += (transactionCalc["sellCoin"] == "JPY") ? ""
+                                 : transactionCalc["sellCoin"] + ": " + transactionCalc["averageAcquisitionPrice_" + transactionCalc["sellCoin"]].toLocaleString();
     var altJpy = isNaN(transactionCalc["altJPY"]) ? "---" : Number(transactionCalc["altJPY"]).toLocaleString("ja-JP", {minimumSignificantDigits : 5});
+    var marketplace = transactionCalc["marketplace"];
+    if (transactionCalc["isShopping"] != undefined && transactionCalc["isShopping"]) {
+      marketplace = transactionCalc["productName"];
+    }
 
     g_historyStr.push({
       "index": index,
       "datetime": transactionCalc["datetime"],
-      "marketplace": transactionCalc["marketplace"],
+      "marketplace": marketplace,
       "comment": transactionCalc["comment"],
       "buyCoin": transactionCalc["buyCoin"],
       "buyAmount": Number(transactionCalc["buyAmount"]).toLocaleString("ja-JP", {minimumSignificantDigits : 5}),
@@ -130,7 +140,10 @@ function calcOneTransaction(coinList, transactionStr, previousTransactionCalc) {
 
   /* 全通貨に対して明細を作る。取引していない通貨に対しても処理するので遅い(todo) */
 
-  if (transaction["isAltTrade"]) {
+  if (transaction["isShopping"]) {
+    transactionCalc["trade_" + "JPY"] = Number(transaction["productJPY"]);
+  }
+  else if (transaction["isAltTrade"]) {
     transactionCalc["trade_" + "JPY"] = Number(transaction["altJPY"]);
   } else {
     if (transaction["buyCoin"] == "JPY") {
@@ -169,7 +182,7 @@ function calcOneTransaction(coinList, transactionStr, previousTransactionCalc) {
   /* 利益の更新 */
   /* 利益 = 売却価額 - 平均取得価格 * 取引量 */
   transactionCalc["profit"] = 0;
-  if (transaction["isAltTrade"] == false) {
+  if (transaction["isAltTrade"] == false && (transaction["isShopping"] == undefined || transaction["isShopping"] == false)) {
     /* 基軸通貨がJPYの時は、売却される仮想通貨に対してのみ利益計算 */
     if (transaction["buyCoin"] == "JPY") {
       transactionCalc["profit"] = transactionCalc["trade_" + "JPY"] - transactionCalc["averageAcquisitionPrice_" + transaction["sellCoin"]] * Math.abs(Number(transaction["sellAmount"]));
@@ -195,10 +208,10 @@ function calcHistory() {
   /* 使用しているコインを全取得 */
   g_usedCoinList = [];
   g_history.forEach(function(transaction) {
-    if (g_usedCoinList.indexOf(transaction["buyCoin"]) == -1) {
+    if (transaction["buyCoin"] != "" && g_usedCoinList.indexOf(transaction["buyCoin"]) == -1) {
       g_usedCoinList.push(transaction["buyCoin"]);
     }
-    if (g_usedCoinList.indexOf(transaction["sellCoin"]) == -1) {
+    if (transaction["sellCoin"] != "" && g_usedCoinList.indexOf(transaction["sellCoin"]) == -1) {
       g_usedCoinList.push(transaction["sellCoin"]);
     }
   });
