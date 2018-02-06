@@ -197,13 +197,18 @@ function loadCoincheckHistory(csv_str) {
     // console.log(coincheck_history[i]);
     var transaction = {
       "datetime" : coincheck_history[i].datetime,
-      "buyCoin" :"",
+      "buyCoin" : "",
       "buyAmount" : 0,
       "sellCoin" : "",
       "sellAmount" : 0,
       "isAltTrade" : false,  // allways false for coincheck market tradeing
       "altJPY" : "---",
       "marketplace" : "coincheck",
+      "isShopping" : false,
+      "productName" : "",
+      "productJPY" : 0.0,
+      "isWithdrawal" : false,
+      "withdrawalJPY" : 0.0,
       "comment" : ("[" + coincheck_history[i].ID + "]")
     };
     if ((coincheck_history[i].Action == "購入") && (coincheck_history[i].rate > 0.0)) {
@@ -241,5 +246,42 @@ function loadCoincheckHistory(csv_str) {
     }
   }
   // console.log(l_history);
+  return l_history;
+}
+
+function loadCoincheckWithdrawalHistory(withdrawal_history) {
+  var l_history = [];
+  var first_alert = true;
+  for (var i=0; i<withdrawal_history.length; ++i) {
+    var transaction = {
+      "datetime" : formatCoincheckDateTime(withdrawal_history[i].Date),
+      "buyCoin" : "",
+      "buyAmount" : 0.0,
+      "sellCoin" : withdrawal_history[i].Currency,
+      "sellAmount" : parseFloat(withdrawal_history[i].Fee),
+      "isAltTrade" : false,
+      "altJPY" : "---",
+      "marketplace" : ("from coincheck to " + withdrawal_history[i].Address),
+      "isShopping" : false,
+      "productName" : "",
+      "productJPY" : 0.0,
+      "isWithdrawal" : true,
+      "withdrawalJPY" : 0.0,
+      "comment" : "WithdrawalAmount=" + withdrawal_history[i].Amount
+    };
+    var fee_coin_price = getJpyPrice(transaction["sellCoin"], transaction["datetime"].split(" ")[0]);
+    if (fee_coin_price != null) {
+      transaction["withdrawalJPY"] = fee_coin_price * transaction["sellAmount"];
+      transaction["comment"] += ", " + transaction["sellCoin"] + "/JPY=" + fee_coin_price;
+      // console.log(withdrawal_history[i]);
+      // console.log(transaction);
+      l_history.push(transaction);
+    }
+    else {
+      if (first_alert) {
+        alert("Error: 価格情報を参照できないため、基軸通貨情報を追加してください。(" + (withdrawal_history[i].__rowNum__ + 1) + "行目)"); first_alert = false;
+      }
+    }
+  }
   return l_history;
 }

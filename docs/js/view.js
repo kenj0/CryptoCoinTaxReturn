@@ -72,6 +72,10 @@ $(function() {
       loadMarketHistory(e, calcHistory);
     });
 
+    $('#withdrawal-history-load').on('change', function (e) {
+      loadWithdrawalHistory(e, calcHistory);
+    });
+
     $('#btn-history-clear').on('click', function () {
       clearHistory();
       calcHistory();

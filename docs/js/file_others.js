@@ -48,6 +48,8 @@ function loadOthersHistory(others_history) {
       "isShopping" : false,
       "productName" : "---",
       "productJPY" : 0.0,
+      "isWithdrawal" : false,
+      "withdrawalJPY" : 0.0,
       "comment" : (others_history[i]["注文ID"] != undefined && 0 < others_history[i]["注文ID"] != "") ? ("[" + others_history[i]["注文ID"] + "]") : ""
     };
 
@@ -136,5 +138,46 @@ function loadOthersHistory(others_history) {
     }
   }
   // console.log(l_history);
+  return l_history;
+}
+
+function loadOthersWithdrawalHistory(withdrawal_history) {
+  var l_history = [];
+  var first_alert = true;
+  for (var i=0; i<withdrawal_history.length; ++i) {
+    var transaction = {
+      "datetime" : formatOthersDateTime(withdrawal_history[i]["日時"]),
+      "buyCoin" : "",
+      "buyAmount" : 0.0,
+      "sellCoin" : withdrawal_history[i]["送金通貨"],
+      "sellAmount" : parseFloat(withdrawal_history[i]["送金手数料"]),
+      "isAltTrade" : false,
+      "altJPY" : "---",
+      "marketplace" : ("from " + withdrawal_history[i]["送金元取引所名 or HWウォレット名(ラベル)"] + " to " + withdrawal_history[i]["送金先取引所名 or HWウォレット名(ラベル)"]),
+      "isShopping" : false,
+      "productName" : "",
+      "productJPY" : 0.0,
+      "isWithdrawal" : true,
+      "withdrawalJPY" : 0.0,
+      "comment" : "WithdrawalAmount=" + withdrawal_history[i]["送金通貨量"]
+    };
+    if (getCoinAlias(transaction["sellCoin"]) != null) {
+      transaction["sellCoin"] = getCoinAlias(transaction["sellCoin"]);
+    }
+    var fee_coin_price = (withdrawal_history[i]["送金通貨時価(JPY単価)"] == undefined) ? getJpyPrice(transaction["sellCoin"], transaction["datetime"].split(" ")[0])
+                                                                                       : parseFloat(withdrawal_history[i]["送金通貨時価(JPY単価)"]);
+    if (fee_coin_price != null) {
+      transaction["withdrawalJPY"] = fee_coin_price * transaction["sellAmount"];
+      transaction["comment"] += ", " + transaction["sellCoin"] + "/JPY=" + fee_coin_price;
+      // console.log(withdrawal_history[i]);
+      // console.log(transaction);
+      l_history.push(transaction);
+    }
+    else {
+      if (first_alert) {
+        alert("Error: 価格情報を参照できないため、基軸通貨情報を追加してください。(" + (withdrawal_history[i].__rowNum__ + 1) + "行目)"); first_alert = false;
+      }
+    }
+  }
   return l_history;
 }

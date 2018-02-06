@@ -41,6 +41,11 @@ function loadBitflyerHistory(bitflyer_history) {
       "isAltTrade" : false,
       "altJPY" : "---",
       "marketplace" : "bitFlyer",
+      "isShopping" : false,
+      "productName" : "",
+      "productJPY" : 0.0,
+      "isWithdrawal" : false,
+      "withdrawalJPY" : 0.0,
       "comment" : ("[" + bitflyer_history[i]["注文 ID"] + "]")
     };
 
@@ -83,6 +88,45 @@ function loadBitflyerHistory(bitflyer_history) {
     } else {
       if (first_alert) {
         alert("Error: Could not parse 取引種別 column."); first_alert = false;
+      }
+    }
+  }
+  return l_history;
+}
+
+function loadBitflyerWithdrawalHistory(withdrawal_history) {
+  var l_history = [];
+  var first_alert = true;
+  for (var i=0; i<withdrawal_history.length; ++i) {
+    if (withdrawal_history[i]["取引種別"] == "外部送付") {
+      var transaction = {
+        "datetime" : formatBitflyerDateTime(withdrawal_history[i]["取引日時"]),
+        "buyCoin" : "",
+        "buyAmount" : 0.0,
+        "sellCoin" : withdrawal_history[i]["通貨等"],
+        "sellAmount" : parseFloat(withdrawal_history[i]["手数料合計"]),
+        "isAltTrade" : false,
+        "altJPY" : "---",
+        "marketplace" : ("from bitFlyer to " + withdrawal_history[i]["アドレス"]),
+        "isShopping" : false,
+        "productName" : "",
+        "productJPY" : 0.0,
+        "isWithdrawal" : true,
+        "withdrawalJPY" : 0.0,
+        "comment" : "WithdrawalAmount=" + (-parseFloat(withdrawal_history[i]["数量"]))
+      };
+      var fee_coin_price = getJpyPrice(transaction["sellCoin"], transaction["datetime"].split(" ")[0]);
+      if (fee_coin_price != null) {
+        transaction["withdrawalJPY"] = fee_coin_price * transaction["sellAmount"];
+        transaction["comment"] += ", " + transaction["sellCoin"] + "/JPY=" + fee_coin_price;
+        console.log(withdrawal_history[i]);
+        console.log(transaction);
+        l_history.push(transaction);
+      }
+      else {
+        if (first_alert) {
+          alert("Error: 価格情報を参照できないため、基軸通貨情報を追加してください。(" + (withdrawal_history[i].__rowNum__ + 1) + "行目)"); first_alert = false;
+        }
       }
     }
   }

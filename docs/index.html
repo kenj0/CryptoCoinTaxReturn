@@ -18,31 +18,47 @@
     <hr>
 
     <div class="container">
-      <h2>本アプリ帳簿ファイル入出力</h2>
+      <h2>本アプリ作業ファイル入出力</h2>
       <input type="file" id="file-history-load" style="display:none;">
       <button type="button" class="btn btn-primary" onClick="$('#file-history-load').click();">Load</button>
       <a href="#"  type="button" class="btn btn-success" id="btn-history-save">Save</a>
       <hr>
-      <h2>取引所CSVファイルのインポート</h2>
-      <div class="col-sm-3">
-        <select class="form-control" id="sel-market-file-type">
-          <option selected>coincheck -TradeHistory-</option>
-          <option>Zaif -TradeHistory-</option>
-          <option>bitFlyer -TradeHistory-</option>
-          <option>Binance -TradeHistory-</option>
-          <option>Others -TradeHistory-</option>
-          <!-- <option>Zaif -DepositHistory-</option> -->
-          <!-- <option>Zaif -WithdrawHistory-</option> -->
-          <!-- <option>Binance -DepositHistory-</option> -->
-          <!-- <option>Binance -WithdrawHistory-</option> -->
-        </select>
+      <div class="row">
+        <h2>各取引所 取引履歴(Excelファイル) のインポート</h2>
+        <div class="col-sm-2">
+          <select class="form-control" id="sel-market-file-type-01">
+            <option selected>coincheck</option>
+            <option>Zaif</option>
+            <option>bitFlyer</option>
+            <option>Binance</option>
+            <option>Others</option>
+          </select>
+        </div>
+        <div class="col-sm-1">
+          <input type="file" id="market-history-load" style="display:none;">
+          <button type="button" class="btn btn-primary" onClick="$('#market-history-load').click();">Open</button>
+        </div>
+        <div class="col-sm-8">
+          <p>  未対応取引所向け: <a href="sample/共通取引履歴テンプレート.xlsx">共通取引履歴テンプレート.xlsx</a>  ("Others" でインポート)</p>
+          <p>  国税庁提示資料計算例: <a href="sample/取引履歴サンプル01.xlsx">例１</a>,<a href="sample/取引履歴サンプル02.xlsx">例２</a>,<a href="sample/取引履歴サンプル03.xlsx">例３</a>,<a href="sample/取引履歴サンプル04.xlsx">例４</a>  ("Others" でインポート)</p>
+        </div>
       </div>
-      <input type="file" id="market-history-load" style="display:none;">
-      <button type="button" class="btn btn-primary" onClick="$('#market-history-load').click();">Open</button>
-      <hr>
-      <p>  未対応取引所向け: <a href="sample/共通取引履歴テンプレート.xlsx">共通取引履歴テンプレート.xlsx</a>  (Others -TradeHistory- でインポート)</p>
-      <p>  国税庁提示資料計算例: <a href="sample/取引履歴サンプル01.xlsx">例１</a>,<a href="sample/取引履歴サンプル02.xlsx">例２</a>,<a href="sample/取引履歴サンプル03.xlsx">例３</a>,<a href="sample/取引履歴サンプル04.xlsx">例４</a>  (Others -TradeHistory- でインポート)</p>
-      <!-- <hr> -->
+      <div class="row">
+        <h2>各取引所 送金履歴(Excelファイル) のインポート <span style="color:blue">[Option]</span></h2>
+        <div class="col-sm-2">
+          <select class="form-control" id="sel-market-file-type-02">
+            <option selected>coincheck</option>
+            <option>Zaif</option>
+            <option>bitFlyer</option>
+            <option>Binance</option>
+            <option>Others</option>
+          </select>
+        </div>
+        <div class="col-sm-1">
+          <input type="file" id="withdrawal-history-load" style="display:none;">
+          <button type="button" class="btn btn-primary" onClick="$('#withdrawal-history-load').click();">Open</button>
+        </div>
+      </div>
     </div>
 <!--
     <div class="container">
@@ -238,11 +254,12 @@
       <p><b>    [2018-Jan-21]</b>    取引履歴のCSVダウンロード機能追加</p>
       <p><b>    [2018-Jan-28]</b>    Zaifの公式取引履歴インポートに対応  (これまでの手作業CSVファイルは非対応となります)</p>
       <p><b>    [2018-Feb-02]</b>    仮想通貨による商品の購入に対応</p>
+      <p><b>    [2018-Feb-07]</b>    送金履歴の入力に対応</p>
       <hr>
 
       <table class="aff-table">
         <tr>
-          <th><p><a href="https://coincheck.com/?c=e_BIUc4ZXt0" target="_blank"><img src="https://coincheck.com/images/affiliates/05_cc_banner_300x250.png" alt="ビットコイン取引高日本一の仮想通貨取引所 coincheck bitcoin" /></a></p></th>
+          <!-- <th><p><a href="https://coincheck.com/?c=e_BIUc4ZXt0" target="_blank"><img src="https://coincheck.com/images/affiliates/05_cc_banner_300x250.png" alt="ビットコイン取引高日本一の仮想通貨取引所 coincheck bitcoin" /></a></p></th> -->
           <th><p><a href="https://zaif.jp?ac=30cz7vcufp" rel="nofollow"><img src="https://d2p8taqyjofgrq.cloudfront.net/images/affiliate/banner/zaif_A_300x250.png" /></a></p></th>
           <th><p><a href="https://bitflyer.jp?bf=5wouahot" target="_blank"><img src="https://bitflyer.jp/Images/Affiliate/affi_04_300x250.gif?201709" alt="bitFlyer ビットコインを始めるなら安心・安全な取引所で" /></a></p></th>
           <th><p><a href="https://www.binance.com/?ref=11315323" rel="nofollow"><img src="https://cdn-ak.f.st-hatena.com/images/fotolife/k/kenj0/20180106/20180106164343.png" alt="中級者以上がみんな使ってる仮想通貨取引所 Binance" /></a></p></th>

@@ -88,7 +88,7 @@ function generateHistoryStr()
                                  : transactionCalc["sellCoin"] + ": " + transactionCalc["averageAcquisitionPrice_" + transactionCalc["sellCoin"]].toLocaleString();
     var altJpy = isNaN(transactionCalc["altJPY"]) ? "---" : Number(transactionCalc["altJPY"]).toLocaleString("ja-JP", {minimumSignificantDigits : 5});
     var marketplace = transactionCalc["marketplace"];
-    if (transactionCalc["isShopping"] != undefined && transactionCalc["isShopping"]) {
+    if (transactionCalc["isShopping"]) {
       marketplace = transactionCalc["productName"];
     }
 
@@ -133,6 +133,8 @@ function generateHistoryCSV() {
   return buff;
 }
 
+var g_calc_one_transaction_first_alert = true;
+
 /* 1つのトランザクションに対して、平均取得価格などを計算して返す */
 function calcOneTransaction(coinList, transactionStr, previousTransactionCalc) {
   var transaction = JSON.parse(transactionStr);
@@ -143,6 +145,9 @@ function calcOneTransaction(coinList, transactionStr, previousTransactionCalc) {
   if (transaction["isShopping"]) {
     transactionCalc["trade_" + "JPY"] = Number(transaction["productJPY"]);
   }
+  else if (transaction["isWithdrawal"]) {
+    transactionCalc["trade_" + "JPY"] = Number(transaction["withdrawalJPY"]);
+  }
   else if (transaction["isAltTrade"]) {
     transactionCalc["trade_" + "JPY"] = Number(transaction["altJPY"]);
   } else {
@@ -150,8 +155,9 @@ function calcOneTransaction(coinList, transactionStr, previousTransactionCalc) {
       transactionCalc["trade_" + "JPY"] = Number(transaction["buyAmount"]);
     } else if (transaction["sellCoin"] == "JPY") {
       transactionCalc["trade_" + "JPY"] = Number(transaction["sellAmount"]);
-    } else {
+    } else if (g_calc_one_transaction_first_alert) {
       alert("Error: Need to set JPY Amount for Altcoin trade.");
+      g_calc_one_transaction_first_alert = false;
     }
   }
 
@@ -182,7 +188,7 @@ function calcOneTransaction(coinList, transactionStr, previousTransactionCalc) {
   /* 利益の更新 */
   /* 利益 = 売却価額 - 平均取得価格 * 取引量 */
   transactionCalc["profit"] = 0;
-  if (transaction["isAltTrade"] == false && (transaction["isShopping"] == undefined || transaction["isShopping"] == false)) {
+  if ((transaction["isAltTrade"] == false) && (transaction["isShopping"] == false) && (transaction["isWithdrawal"] == false)) {
     /* 基軸通貨がJPYの時は、売却される仮想通貨に対してのみ利益計算 */
     if (transaction["buyCoin"] == "JPY") {
       transactionCalc["profit"] = transactionCalc["trade_" + "JPY"] - transactionCalc["averageAcquisitionPrice_" + transaction["sellCoin"]] * Math.abs(Number(transaction["sellAmount"]));

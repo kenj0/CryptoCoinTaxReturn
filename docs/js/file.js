@@ -41,7 +41,7 @@ function loadMarketHistory(e, callback) {
       var reader = new FileReader();
       reader.readAsText(selectedFile);
       reader.addEventListener("load", function() {
-        switch (document.getElementById("sel-market-file-type").selectedIndex) {
+        switch (document.getElementById("sel-market-file-type-01").selectedIndex) {
         case 0: l_history = loadCoincheckHistory(reader.result); break;
         case 1: l_history = loadZaifHistory(convertCsvToJson(reader.result)); break;
         case 2: l_history = loadBitflyerHistory(convertCsvToJson(reader.result)); break;
@@ -62,12 +62,65 @@ function loadMarketHistory(e, callback) {
         workbook_sheets = xlsx.toJson();
         if (Object.keys(workbook_sheets).length == 1) {
           var imported_history = workbook_sheets[Object.keys(workbook_sheets)[0]];
-          switch (document.getElementById("sel-market-file-type").selectedIndex) {
+          switch (document.getElementById("sel-market-file-type-01").selectedIndex) {
           case 0: l_history = null; /* not supported */ break;
           case 1: l_history = loadZaifHistory(imported_history); break;
           case 2: l_history = loadBitflyerHistory(imported_history); break;
           case 3: l_history = loadBinanceHistory(imported_history); break;
           case 4: l_history = loadOthersHistory(imported_history); break;
+          default: alert("Error: Illigal selection.");
+          };
+        }
+        if (l_history != null && 0 < l_history.length) {
+          g_history = g_history.concat(l_history);
+          callback();
+        } else {
+          alert("Error: Could not import input file.");
+        }
+      });
+    } else {
+      alert("Error: Input file ext type is not supported.");
+    }
+  }
+}
+
+function loadWithdrawalHistory(e, callback) {
+  var selectedFile = e.target.files[0];
+  var splitted_name = selectedFile.name.split('.');
+  if (0 < splitted_name.length) {
+    var file_type = splitted_name[splitted_name.length - 1].toLowerCase();
+    if (file_type == "csv") {
+      var l_history = null;
+      var reader = new FileReader();
+      reader.readAsText(selectedFile);
+      reader.addEventListener("load", function() {
+        switch (document.getElementById("sel-market-file-type-02").selectedIndex) {
+        case 0: l_history = loadCoincheckWithdrawalHistory(convertCsvToJson(reader.result)); break;
+        case 1: l_history = loadZaifWithdrawalHistory(convertCsvToJson(reader.result), selectedFile.name); break;
+        case 2: l_history = loadBitflyerWithdrawalHistory(convertCsvToJson(reader.result)); break;
+        case 3: l_history = loadBinanceWithdrawalHistory(convertCsvToJson(reader.result)); break;
+        case 4: l_history = loadOthersWithdrawalHistory(convertCsvToJson(reader.result)); break;
+        default: alert("Error: Illigal selection.");
+        };
+        if (l_history != null && 0 < l_history.length) {
+          g_history = g_history.concat(l_history);
+          callback();
+        } else {
+          alert("Error: Could not import input file.");
+        }
+      });
+    } else if (file_type == "xls" || file_type == "xlsx") {
+      var l_history = null;
+      var er = new ExcelJs.Reader(selectedFile, function (e, xlsx) {
+        workbook_sheets = xlsx.toJson();
+        if (Object.keys(workbook_sheets).length == 1) {
+          var imported_history = workbook_sheets[Object.keys(workbook_sheets)[0]];
+          switch (document.getElementById("sel-market-file-type-02").selectedIndex) {
+          case 0: l_history = null; /* not supported */ break;
+          case 1: l_history = loadZaifWithdrawalHistory(imported_history, selectedFile); break;
+          case 2: l_history = loadBitflyerWithdrawalHistory(imported_history); break;
+          case 3: l_history = loadBinanceWithdrawalHistory(imported_history); break;
+          case 4: l_history = loadOthersWithdrawalHistory(imported_history); break;
           default: alert("Error: Illigal selection.");
           };
         }
@@ -99,7 +152,7 @@ function convertCsvToJson(csv_str) {
         for (var j=0; j<cells.length; ++j) {
           if (0 < j) { buff += "," }
           buff += "\"" + labels[j] + "\"" + ":";
-          if ((cells[j] != "" && isFinite(cells[j])) || cells[j] == "true" || cells[j] == "false") {
+          if (/^0x/.test(cells[j]) == false && ((cells[j] != "" && isFinite(cells[j])) || cells[j] == "true" || cells[j] == "false")) {
             buff += cells[j];
           } else {
             buff += "\"" + cells[j] + "\"";

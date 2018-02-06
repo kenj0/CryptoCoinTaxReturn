@@ -3,6 +3,9 @@ var g_binance_btc_trade_list = ["BNBBTC", "NULSBTC", "CTRBTC", "NEOBTC", "LINKBT
 var g_binance_eth_trade_list = ["NULSETH", "ASTETH", "EOSETH", "SNTETH", "MCOETH", "OAXETH", "OMGETH", "BQXETH", "WTCETH", "QTUMETH", "BNTETH", "DNTETH", "ICNETH", "SNMETH", "SNGLSETH", "NEOETH", "KNCETH", "STRATETH", "ZRXETH", "FUNETH", "LINKETH", "XVGETH", "IOTAETH", "CTRETH", "SALTETH", "ADAETH", "ADXETH", "AIONETH", "AMBETH", "ARKETH", "ARNETH", "BATETH", "BCCETH", "BCDETH", "BCPTETH", "BNBETH", "BRDETH", "BTGETH", "BTSETH", "CDTETH", "CMTETH", "CNDETH", "DASHETH", "DGDETH", "DLTETH", "EDOETH", "ELFETH", "ENGETH", "ENJETH", "ETCETH", "EVXETH", "FUELETH", "GTOETH", "GVTETH", "GXSETH", "HSRETH", "ICXETH", "KMDETH", "LENDETH", "LRCETH", "LSKETH", "LTCETH", "LUNETH", "MANAETH", "MDAETH", "MODETH", "MTHETH", "MTLETH", "NAVETH", "NEBLETH", "OSTETH", "POEETH", "POWRETH", "PPTETH", "QSPETH", "RCNETH", "RDNETH", "REQETH", "STORJETH", "SUBETH", "TNBETH", "TNTETH", "TRXETH", "VENETH", "VIBETH", "WABIETH", "WAVESETH", "WINGSETH", "XLMETH", "XMRETH", "XRPETH", "XZCETH", "YOYOETH", "ZECETH"]
 var g_binance_usdt_trade_list = ["BTCUSDT", "BCCUSDT", "LTCUSDT", "NEOUSDT", "BNBUSDT", "ETHUSDT"]
 
+// Note: @2018/Feb/06 (only subset)
+var g_binance_withdrawal_fee_list = { "BNB" : 0.99, "BTC" : 0.001, "NEO" : 0, "ETH" : 0.01, "LTC" : 0.01, "BCC" : 0.001, "USDT" : 16.4, "MCO" : 0.98, "YOYO" : 52, "TRX" : 218, "SNM" : 41, "IOTA" : 0.5, "ETC" : 0.01, "DASH" : 0.002, "BTG" : 0.001, "XRP" : 0.25, "XMR" : 0.04, "ZEC" : 0.005, "BCD" : 1, "ADX" : 7.1, "ADA" : 1, "XLM" : 0.01, "SBTC" : 1, "BCX" : 1 }
+
 
 function formatBinanceDateTime(datetime, delay = 0) {
   // console.log(datetime);
@@ -28,6 +31,11 @@ function convertBinanceTransaction(each_history, first_alert) {
     "isAltTrade" : true,  // allways true for binance market tradeing
     "altJPY" : "---",
     "marketplace" : "Binance",
+    "isShopping" : false,
+    "productName" : "",
+    "productJPY" : 0.0,
+    "isWithdrawal" : false,
+    "withdrawalJPY" : 0.0,
     "comment" : ("rate=" + each_history.Price)
   };
   var market = "";
@@ -90,6 +98,11 @@ function convertBinanceFeeTransaction(datetime, mainTransaction, fee, feeCoin, f
     "isAltTrade" : true,  // allways true for binance market tradeing
     "altJPY" : "---",
     "marketplace" : "Binance",
+    "isShopping" : false,
+    "productName" : "",
+    "productJPY" : 0.0,
+    "isWithdrawal" : false,
+    "withdrawalJPY" : 0.0,
     "comment" : "[Transaction Fee]"
   };
 
@@ -139,6 +152,55 @@ function loadBinanceHistory(binance_history) {
       }
       if (ret.feeTransaction != null) {
         l_history.push(ret.feeTransaction);
+      }
+    }
+  }
+  return l_history;
+}
+
+function loadBinanceWithdrawalHistory(withdrawal_history) {
+  var l_history = [];
+  var first_alert = true;
+  for (var i=0; i<withdrawal_history.length; ++i) {
+    var transaction = {
+      "datetime" : formatBinanceDateTime(withdrawal_history[i].Date),
+      "buyCoin" : "",
+      "buyAmount" : 0.0,
+      "sellCoin" : withdrawal_history[i].Coin,
+      "sellAmount" : "",
+      "isAltTrade" : false,
+      "altJPY" : "---",
+      "marketplace" : ("from binance to " + withdrawal_history[i].Address),
+      "isShopping" : false,
+      "productName" : "",
+      "productJPY" : 0.0,
+      "isWithdrawal" : true,
+      "withdrawalJPY" : 0.0,
+      "comment" : "WithdrawalAmount=" + withdrawal_history[i].Amount
+    };
+    if (getCoinAlias(transaction["sellCoin"]) != null) {
+      transaction["sellCoin"] = getCoinAlias(transaction["sellCoin"]);
+    }
+    var fee_coin_price = getJpyPrice(transaction["sellCoin"], transaction["datetime"].split(" ")[0]);
+    if (fee_coin_price != null) {
+      var fee_amount = g_binance_withdrawal_fee_list[withdrawal_history[i].Coin];
+      if (fee_amount != undefined) {
+        transaction["withdrawalJPY"] = fee_coin_price * transaction["sellAmount"];
+        transaction["sellAmount"] = fee_amount;
+        transaction["comment"] += ", " + transaction["sellCoin"] + "/JPY=" + fee_coin_price;
+        // console.log(withdrawal_history[i]);
+        // console.log(transaction);
+        l_history.push(transaction);
+      }
+      else {
+        if (first_alert) {
+          alert("Error: 送金手数料情報を参照できないためインポートできません。共通テンプレートをご使用ください。(" + (withdrawal_history[i].__rowNum__ + 1) + "行目)"); first_alert = false;
+        }
+      }
+    }
+    else {
+      if (first_alert) {
+        alert("Error: 価格情報を参照できないためインポートできません。共通テンプレートをご使用ください。(" + (withdrawal_history[i].__rowNum__ + 1) + "行目)"); first_alert = false;
       }
     }
   }
