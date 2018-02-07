@@ -170,7 +170,7 @@ function loadBinanceWithdrawalHistory(withdrawal_history) {
       "sellAmount" : "",
       "isAltTrade" : false,
       "altJPY" : "---",
-      "marketplace" : ("from binance to " + withdrawal_history[i].Address),
+      "marketplace" : ("from Binance to " + withdrawal_history[i].Address),
       "isShopping" : false,
       "productName" : "",
       "productJPY" : 0.0,

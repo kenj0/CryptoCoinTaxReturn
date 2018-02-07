@@ -23,8 +23,16 @@
       <button type="button" class="btn btn-primary" onClick="$('#file-history-load').click();">Load</button>
       <a href="#"  type="button" class="btn btn-success" id="btn-history-save">Save</a>
       <hr>
+      <h2>各取引所 取引履歴(Excelファイル) のインポート</h2>
       <div class="row">
-        <h2>各取引所 取引履歴(Excelファイル) のインポート</h2>
+        <div class="col-sm-2">
+          <small style="color:red">必須</small>
+        </div>
+        <div class="col-sm-10">
+          <p></p>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-sm-2">
           <select class="form-control" id="sel-market-file-type-01">
             <option selected>coincheck</option>
@@ -43,8 +51,16 @@
           <p>  国税庁提示資料計算例: <a href="sample/取引履歴サンプル01.xlsx">例１</a>,<a href="sample/取引履歴サンプル02.xlsx">例２</a>,<a href="sample/取引履歴サンプル03.xlsx">例３</a>,<a href="sample/取引履歴サンプル04.xlsx">例４</a>  ("Others" でインポート)</p>
         </div>
       </div>
+      <h3>各取引所 送金履歴(Excelファイル) のインポート</h3>
       <div class="row">
-        <h2>各取引所 送金履歴(Excelファイル) のインポート</h2>
+        <div class="col-sm-2">
+          <small style="color:green">任意</small>
+        </div>
+        <div class="col-sm-10">
+          <p></p>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-sm-2">
           <select class="form-control" id="sel-market-file-type-02">
             <option selected>coincheck</option>
@@ -52,6 +68,7 @@
             <option>bitFlyer</option>
             <option>Binance</option>
             <option>Others</option>
+            <option>Replace address</option>
           </select>
         </div>
         <div class="col-sm-1">
@@ -60,6 +77,7 @@
         </div>
         <div class="col-sm-9">
           <p>  手入力用: <a href="sample/送金履歴テンプレート.xlsx">送金履歴テンプレート.xlsx</a>  ("Others" でインポート)</p>
+          <p>  送信アドレス置換用: <a href="sample/送信アドレス置換サンプル.xlsx">送金アドレス置換サンプル.xlsx</a>  ("Replace address" でインポート)</p>
         </div>
       </div>
     </div>
@@ -258,6 +276,7 @@
       <p><b>    [2018-Jan-28]</b>    Zaifの公式取引履歴インポートに対応  (これまでの手作業CSVファイルは非対応となります)</p>
       <p><b>    [2018-Feb-02]</b>    仮想通貨による商品の購入に対応</p>
       <p><b>    [2018-Feb-07]</b>    送金履歴の入力に対応</p>
+      <p><b>    [2018-Feb-08]</b>    送金アドレスのラベル置換に対応</p>
       <hr>
 
       <table class="aff-table">

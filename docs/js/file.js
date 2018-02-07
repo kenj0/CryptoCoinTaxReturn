@@ -100,6 +100,7 @@ function loadWithdrawalHistory(e, callback) {
         case 2: l_history = loadBitflyerWithdrawalHistory(convertCsvToJson(reader.result)); break;
         case 3: l_history = loadBinanceWithdrawalHistory(convertCsvToJson(reader.result)); break;
         case 4: l_history = loadOthersWithdrawalHistory(convertCsvToJson(reader.result)); break;
+        case 5: replaceAddress(convertCsvToJson(reader.result)); callback(); return;
         default: alert("Error: Illigal selection.");
         };
         if (l_history != null && 0 < l_history.length) {
@@ -121,6 +122,7 @@ function loadWithdrawalHistory(e, callback) {
           case 2: l_history = loadBitflyerWithdrawalHistory(imported_history); break;
           case 3: l_history = loadBinanceWithdrawalHistory(imported_history); break;
           case 4: l_history = loadOthersWithdrawalHistory(imported_history); break;
+          case 5: replaceAddress(imported_history); callback(); return;
           default: alert("Error: Illigal selection.");
           };
         }

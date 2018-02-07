@@ -249,3 +249,12 @@ function calcProfit(){
   });
   $('#text-profit').text("対象期間の損益: " + profit.toLocaleString() + "円");
 }
+
+/* 送信アドレス置換 */
+function replaceAddress(address_label_list) {
+  g_history.forEach(function(transaction) {
+    for (var i=0; i<address_label_list.length; ++i) {
+      transaction["marketplace"] = transaction["marketplace"].replace(address_label_list[i]["アドレス"], address_label_list[i]["ラベル"]);
+    }
+  });
+}

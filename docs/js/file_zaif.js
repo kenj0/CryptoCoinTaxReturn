@@ -110,7 +110,7 @@ function loadZaifWithdrawalHistory(withdrawal_history, filename) {
       "sellAmount" : parseFloat(withdrawal_history[i]["手数料"]),
       "isAltTrade" : false,
       "altJPY" : "---",
-      "marketplace" : ("from zaif to " + withdrawal_history[i]["アドレス"]),
+      "marketplace" : ("from Zaif to " + withdrawal_history[i]["アドレス"]),
       "isShopping" : false,
       "productName" : "",
       "productJPY" : 0.0,
